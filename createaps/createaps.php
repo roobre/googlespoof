@@ -8,11 +8,12 @@ define('AUTHCOOKIE', 'cybercamp2:282401487:1448674819:GITL4702g/iluzMM8TdXbw');
 define('MONTHS', '12');
 define('LAT1', '47.6119');
 define('LNG1', '-122.336');
+define('OFFSET', '0.0002');
 
 date_default_timezone_set('Europe/Madrid');
 
 $ch = curl_init(WIGLEURL);
-curl_setopt($ch, CURLOPT_POSTFIELDS, 'latrange1=' . LAT1 . '&latrange2=' . (LAT1 + 0.0002) . '&longrange1=' . LNG1 . '&longrange2=' . (LNG1 + 0.0002));
+curl_setopt($ch, CURLOPT_POSTFIELDS, 'latrange1=' . LAT1 . '&latrange2=' . (LAT1 + OFFSET) . '&longrange1=' . LNG1 . '&longrange2=' . (LNG1 + OFFSET));
 curl_setopt($ch, CURLOPT_COOKIE, 'auth=' . AUTHCOOKIE);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
