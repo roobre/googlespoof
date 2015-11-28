@@ -5,11 +5,11 @@ define('WIGLEURL', 'https://wigle.net/api/v1/jsonSearch');
 //define('AUTHCOOKIE', 'pichu:312993165:1431204925:5pc0UTY8nQDxOvrEn6V3gg');
 define('AUTHCOOKIE', 'cybercamp2:282401487:1448674819:GITL4702g/iluzMM8TdXbw');
 
-define('MDK3_MONITOR', 'wlan0mon');
-define('AIRBASE_MONITOR', 'wlp0s20u3mon');
+define('MDK3_MONITOR', 'wlp0s20u3mon');
+define('AIRBASE_MONITOR', 'wlan0mon');
 define('MONTHS', '12');
-define('LAT', '42.3611');
-define('LNG', '-71.0612');
+define('LAT', '41.3879');
+define('LNG', '2.1698');
 
 define('OFFSET', '0.0003');
 define('NUMAPS', '40');
