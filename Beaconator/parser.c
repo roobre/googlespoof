@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*
+ * This functions scans a file looking for MAC essid combinations, and creates a linked list of apt_t
+ */
 void parse_aps(const char* filename, ap_t** list) {
     FILE* aps = fopen(filename, "r");
     char linebuf[64];
@@ -22,7 +25,7 @@ void parse_aps(const char* filename, ap_t** list) {
             *list = *current;
 
         strcpy((*current)->essid, linebuf + 17);
-        (*current)->essid[strlen((*current)->essid) - 1] = '\0'; // Wooo its magic
+        (*current)->essid[strlen((*current)->essid) - 1] = '\0'; // Wooo its magic (actually it removes trailing \n)
 
         for (int i = 0; i < 6; i++) {
             (*current)->bssid[i] = strtol(linebuf + 3*i, NULL, 16);
