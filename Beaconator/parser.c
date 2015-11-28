@@ -31,3 +31,21 @@ void parse_aps(const char* filename, ap_t** list) {
         current = &((*current)->next);
     }
 }
+
+/*
+                _
+ You expected   \`*-.
+ some docume-    )  _`-.
+ ntation abo-   .  : `. .
+ ut this po-    : _   '  \
+ inter hell.   ; *` _.   `*-._
+                `-.-'          `-.
+ I can't gi-      ;       `       `.
+ ve you tha-      :.       .        \
+ t, so take       . \  .   :   .-'   .
+ a cute cat       '  `+.;  ;  '      :
+ instead.         :  '  |    ;       ;-.
+                  ; '   : :`-:     _.`* ;
+         [bug] .*' /  .*' ; .*`- +'  `*'
+               `*-*   `*-*  `*-*'
+ */
