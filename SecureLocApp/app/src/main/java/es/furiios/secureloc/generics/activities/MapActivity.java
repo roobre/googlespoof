@@ -18,8 +18,8 @@ import es.furiios.secureloc.R;
 
 
 /**
- * Clase de apoyo para el mapa. Esta clase contiene las funciones básicas para una activity que quiere
- * añadir y quitar marcadores, hacer zoom en uno de ellos u encuadrar el mapa en todos ellos,
+ * Support class for the map. This class contains all the basic functions required to add and remove
+ * markers, as well as zoom and other UI manipulation.
  */
 public abstract class MapActivity extends AppCompatActivity {
 

@@ -10,8 +10,8 @@ import android.support.v4.app.NotificationCompat;
 import es.furiios.secureloc.R;
 
 /**
- * Handler de notificaciones. Se encarga de enviar las notificaiones correspondientes dependiendo de los
- * eventos que sucedan en el sistema.
+ * Notification handlers. Manages notifications shows to the user, like the "Location mismatch"
+ * notification.
  */
 public class NotificationHandler {
 

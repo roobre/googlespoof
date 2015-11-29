@@ -3,7 +3,7 @@ package es.furiios.secureloc.log;
 import android.util.Log;
 
 /**
- * Apoyo para logear mensajes de la aplicación.
+ * Support class for logging.
  */
 public abstract class Logger {
 

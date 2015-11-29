@@ -27,9 +27,9 @@ import es.furiios.secureloc.location.services.SecureLocLocationService;
 import es.furiios.secureloc.notifications.NotificationHandler;
 
 /**
- * Clase principal de la aplicación. Se encarga de crear el mapa y de añadir y eliminar los marcadores
- * dependiendo de las localizaciones reportadas por el sistema. Se puede activar y desactivar el servicio
- * y mostrar el debug de las localizaciones obtenidas.
+ * This is the main appliation class. It creates the map and adds and removes the marker depending
+ * on the locations reported by the system. It can also control the background service and show
+ * debug logs abut obtained locations.
  */
 public class MainActivity extends MapActivity implements OnMapReadyCallback, LocationListener {
 

@@ -18,7 +18,7 @@ import es.furiios.secureloc.log.Logger;
 import es.furiios.secureloc.notifications.NotificationHandler;
 
 /**
- * Servicio principal de la aplicación. Se encarga de comprobar si las localizaciones obtenidas son o no sospechosas.
+ * Main app service. It scans for wifi-provided locations, and compares them to trusty GPS.
  */
 public class SecureLocLocationService extends Service implements LocationListener {
 

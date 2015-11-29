@@ -8,7 +8,7 @@ import es.furiios.secureloc.location.services.SecureLocLocationService;
 import es.furiios.secureloc.log.Logger;
 
 /**
- * Receiver que se encarga de despertar al servicio al boot del dispositivo
+ * Receiver to start background service at boot.
  */
 public class WakeUpSecureLoc extends BroadcastReceiver {
 
