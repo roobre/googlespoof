@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -19,9 +20,11 @@ import es.furiios.secureloc.notifications.NotificationHandler;
 public class SecureLocLocationService extends Service implements LocationListener {
 
     private static final String TAG = "LocatorLocationService";
+    private static Intent service;
     private static boolean inited;
 
     private LocationManager mLocationManager;
+    private SharedPreferences mPreferences;
     private Location mLastNetworkLocation;
     private boolean isRequesting;
 
@@ -29,11 +32,16 @@ public class SecureLocLocationService extends Service implements LocationListene
     public int onStartCommand(Intent intent, int flags, int startId) {
         inited = true;
         Logger.v(TAG, "LocatorLocationService started!");
-        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mLocationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0, this);
+        mPreferences = getSharedPreferences("User", Context.MODE_PRIVATE);
+        if (mPreferences.getBoolean("service", true)) {
+            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                mLocationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0, this);
+            }
+            return START_STICKY;
+        } else {
+            return START_NOT_STICKY;
         }
-        return START_STICKY;
     }
 
     @Override
@@ -78,7 +86,15 @@ public class SecureLocLocationService extends Service implements LocationListene
 
     public static void init(Activity activity) {
         if (!inited) {
-            activity.startService(new Intent(activity, SecureLocLocationService.class));
+            service = new Intent(activity, SecureLocLocationService.class);
+            activity.startService(service);
+        }
+    }
+
+    public static void finish(Activity activity) {
+        if (inited) {
+            inited = false;
+            activity.startService(service);
         }
     }
 

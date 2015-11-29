@@ -2,6 +2,7 @@ package es.furiios.secureloc.activities;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -9,7 +10,10 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -23,14 +27,27 @@ import es.furiios.secureloc.location.services.SecureLocLocationService;
 
 public class MainActivity extends MapActivity implements OnMapReadyCallback, LocationListener {
 
+    private TextView logNetwork, logGps;
+    private SharedPreferences mPreferences;
     private LocationManager mLocationManager;
     private Location lastNetworkLocation, lastGpsLocation;
     private FloatingActionButton zoomCenter, zoomWifi, zoomGps;
 
     @Override
     protected void onInited() {
+        mPreferences = getSharedPreferences("User", Context.MODE_PRIVATE);
+
         mMapFragment.getMapAsync(this);
-        SecureLocLocationService.init(this);
+        if (mPreferences.getBoolean("debug", true)) {
+            SecureLocLocationService.init(this);
+        }
+
+        logNetwork = (TextView) findViewById(R.id.log_network);
+        logGps = (TextView) findViewById(R.id.log_gps);
+
+        if (mPreferences.getBoolean("debug", false)) {
+            logNetwork.setVisibility(View.VISIBLE);
+        }
 
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         zoomCenter = (FloatingActionButton) findViewById(R.id.zoom_center);
@@ -71,6 +88,8 @@ public class MainActivity extends MapActivity implements OnMapReadyCallback, Loc
             setFABVisibility(zoomCenter, View.VISIBLE);
             setFABVisibility(zoomWifi, View.VISIBLE);
 
+            logNetwork.setText("Network->Lat: " + loc.getLatitude() + "\tLng: " + loc.getLongitude() + "\tAcc: " + loc.getAccuracy());
+
             zoomWifi.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -89,6 +108,8 @@ public class MainActivity extends MapActivity implements OnMapReadyCallback, Loc
             setFABImageResource(zoomGps, loc.isFromMockProvider() ? R.mipmap.ic_gps_fake : R.mipmap.ic_gps_legit);
             setFABVisibility(zoomCenter, View.VISIBLE);
             setFABVisibility(zoomGps, View.VISIBLE);
+
+            logGps.setText("Gps->Lat: " + loc.getLatitude() + "\tLng: " + loc.getLongitude() + "\tAcc: " + loc.getAccuracy());
 
             zoomGps.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -128,6 +149,7 @@ public class MainActivity extends MapActivity implements OnMapReadyCallback, Loc
                 centerOnMarkers();
             } else if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
                 addGpsMarker(location);
+                //Logger.v("es.furiios.secureloc", "Acc: " + location.getAccuracy());
                 centerOnMarkers();
             }
         }
@@ -150,5 +172,44 @@ public class MainActivity extends MapActivity implements OnMapReadyCallback, Loc
         } else if (provider.equals(LocationManager.GPS_PROVIDER)) {
             setFABVisibility(zoomGps, View.GONE);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        menu.getItem(0).setChecked(mPreferences.getBoolean("debug", false));
+        menu.getItem(1).setChecked(mPreferences.getBoolean("service", true));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_debug:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                    logGps.setVisibility(View.GONE);
+                    logNetwork.setVisibility(View.GONE);
+                    mPreferences.edit().putBoolean("debug", false).commit();
+                } else {
+                    item.setChecked(true);
+                    logGps.setVisibility(View.VISIBLE);
+                    logNetwork.setVisibility(View.VISIBLE);
+                    mPreferences.edit().putBoolean("debug", true).commit();
+                }
+                return true;
+            case R.id.action_service:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                    mPreferences.edit().putBoolean("service", false).commit();
+                    SecureLocLocationService.finish(this);
+                } else {
+                    item.setChecked(true);
+                    mPreferences.edit().putBoolean("service", true).commit();
+                    SecureLocLocationService.init(this);
+                }
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
