@@ -6,8 +6,8 @@ project(Beaconator)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 
-set(SOURCE_FILES main.c beaconator.c parser.c)
+set(SOURCE_FILES main.c beaconator.c wigle.c)
 
-link_libraries(orcon2)
+link_libraries(orcon2 curl jansson)
 
 add_executable(Beaconator ${SOURCE_FILES})

@@ -18,7 +18,7 @@ const int DELAY = 100;
 /*
  * Iterates over a list of ap_t, forges beacons with lorcon, and sends them continously to the air.
  */
-void send_beacons(const char* interface, ap_t* list) {
+void send_beacons(ap_t* list, const char* interface) {
     int result = 0;
     lorcon_t* context;
     lorcon_driver_t* driver;

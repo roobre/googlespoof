@@ -17,6 +17,6 @@ typedef struct ap ap_t;
 
 const extern int DELAY;
 
-void send_beacons(const char* interface, ap_t* list);
+void send_beacons(ap_t* list, const char* interface);
 
 #endif //BEACONATOR_BEACONATOR_H
