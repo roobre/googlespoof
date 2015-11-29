@@ -14,7 +14,7 @@
 #include <lorcon2/lorcon_forge.h>
 #include <signal.h>
 
-const int DELAY = 100;
+const int DELAY = 50;
 bool gen;
 
 /*
@@ -67,7 +67,7 @@ void send_beacons(ap_t* list, const char* interface) {
         current = list;
         while (current != NULL) {
             metapack = lcpa_init();
-            //          pack      src     bssid   frame   dur  frag  seq    timest                 beac  cap
+            //          pack      src     bssid   frsame   dur  frag  seq    timest                 beac  cap
             lcpf_beacon(metapack, current->bssid, current->bssid, 0x8000, 0, 0, seq++, (uint64_t) time(NULL), 100, 0x8431);
             // ssid
             lcpf_add_ie(metapack, (uint8_t) 0, strlen(current->essid), current->essid);
