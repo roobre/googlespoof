@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">SecureLoc</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="you_probably_are_victim_of_a_location_falsification">You probably are victim of a location falsification</string>
 </resources>
