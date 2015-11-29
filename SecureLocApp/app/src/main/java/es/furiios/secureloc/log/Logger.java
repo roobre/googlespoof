@@ -2,6 +2,9 @@ package es.furiios.secureloc.log;
 
 import android.util.Log;
 
+/**
+ * Apoyo para logear mensajes de la aplicación.
+ */
 public abstract class Logger {
 
     private static final String TAG = "Logger";

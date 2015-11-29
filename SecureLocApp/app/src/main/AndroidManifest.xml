@@ -32,7 +32,7 @@
         <service
             android:name="es.furiios.secureloc.location.services.SecureLocLocationService"
             android:enabled="true"
-            android:process=":LocatorLocationService" />
+            android:process=":SecureLocLocationService" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />

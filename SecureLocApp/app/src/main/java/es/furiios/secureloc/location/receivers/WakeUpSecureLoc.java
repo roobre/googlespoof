@@ -7,6 +7,9 @@ import android.content.Intent;
 import es.furiios.secureloc.location.services.SecureLocLocationService;
 import es.furiios.secureloc.log.Logger;
 
+/**
+ * Receiver que se encarga de despertar al servicio al boot del dispositivo
+ */
 public class WakeUpSecureLoc extends BroadcastReceiver {
 
     private static final String TAG = "WakeUpSecureLoc";

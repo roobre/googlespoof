@@ -9,6 +9,10 @@ import android.support.v4.app.NotificationCompat;
 
 import es.furiios.secureloc.R;
 
+/**
+ * Handler de notificaciones. Se encarga de enviar las notificaiones correspondientes dependiendo de los
+ * eventos que sucedan en el sistema.
+ */
 public class NotificationHandler {
 
     private static NotificationHandler instance = null;
@@ -41,6 +45,32 @@ public class NotificationHandler {
                 .setContentTitle(mContext.getString(R.string.app_name))
                 .setContentText(mContext.getString(R.string.you_probably_are_victim_of_a_location_falsification))
                 .setAutoCancel(true);
+        mNotificationManager.notify(1, builder.build());
+    }
+
+    public void sendUsingNetworkNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
+        builder.setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_launcher))
+                .setSmallIcon(R.mipmap.ic_wifi_legit)
+                .setColor(Color.BLUE)
+                .setContentTitle(mContext.getString(R.string.app_name))
+                .setContentText("Using Network localization")
+                .setAutoCancel(true);
         mNotificationManager.notify(0, builder.build());
+    }
+
+    public void sendUsingGpsNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
+        builder.setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_launcher))
+                .setSmallIcon(R.mipmap.ic_gps_legit)
+                .setColor(Color.BLUE)
+                .setContentTitle(mContext.getString(R.string.app_name))
+                .setContentText("Using GPS localization")
+                .setAutoCancel(true);
+        mNotificationManager.notify(0, builder.build());
+    }
+
+    public void removeAllNotifications() {
+        mNotificationManager.cancelAll();
     }
 }
