@@ -14,7 +14,5 @@ int main(int argc, char** argv) {
     ap_t* list;
 
     fetch_wigle(&list, 41.3879, 2.1698, 0.0003, 12, 40);
-
     send_beacons(list, argv[1]);
-    //parse_aps(argv[2], &list);
 }

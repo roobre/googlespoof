@@ -12,8 +12,10 @@
 #include <lorcon2/lorcon.h>
 #include <lorcon2/lorcon_packasm.h>
 #include <lorcon2/lorcon_forge.h>
+#include <signal.h>
 
 const int DELAY = 100;
+bool gen;
 
 /*
  * Iterates over a list of ap_t, forges beacons with lorcon, and sends them continously to the air.
@@ -58,7 +60,10 @@ void send_beacons(ap_t* list, const char* interface) {
 
     ap_t* current;
 
-    for (; ;) {
+    signal(SIGINT, trap_sigint);
+    gen = true;
+
+    while (gen) {
         current = list;
         while (current != NULL) {
             metapack = lcpa_init();
@@ -92,4 +97,9 @@ void send_beacons(ap_t* list, const char* interface) {
 
     lorcon_close(context);
     lorcon_free(context);
+}
+
+void trap_sigint(int signal) {
+    gen = false;
+    fprintf(stderr, "\nTrapped SIGINT, cleaning and exiting.\n");
 }

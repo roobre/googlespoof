@@ -6,6 +6,7 @@
 #define BEACONATOR_BEACONATOR_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 struct ap {
     struct ap* next;
@@ -17,6 +18,9 @@ typedef struct ap ap_t;
 
 const extern int DELAY;
 
+extern bool gen;
+
 void send_beacons(ap_t* list, const char* interface);
+static void trap_sigint(int signal);
 
 #endif //BEACONATOR_BEACONATOR_H
