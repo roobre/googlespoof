@@ -41,11 +41,12 @@ public class NotificationHandler {
     public void sendWarningNotification(Location network, Location gps) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
         builder.setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_launcher))
+                .setSmallIcon(R.mipmap.ic_wifi_fake)
                 .setColor(Color.RED)
                 .setContentTitle(mContext.getString(R.string.app_name))
                 .setContentText(mContext.getString(R.string.you_probably_are_victim_of_a_location_falsification))
                 .setAutoCancel(true);
-        mNotificationManager.notify(1, builder.build());
+        mNotificationManager.notify(0, builder.build());
     }
 
     public void sendUsingNetworkNotification() {

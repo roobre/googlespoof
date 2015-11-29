@@ -33,6 +33,7 @@ import es.furiios.secureloc.notifications.NotificationHandler;
  */
 public class MainActivity extends MapActivity implements OnMapReadyCallback, LocationListener {
 
+    private boolean isSpoofed;
     private TextView logNetwork, logGps;
     private SharedPreferences mPreferences;
     private LocationManager mLocationManager;
@@ -88,9 +89,17 @@ public class MainActivity extends MapActivity implements OnMapReadyCallback, Loc
 
     private void addNetworkMarker(Location loc) {
         if (loc != null) {
+            lastNetworkLocation = loc;
+            isSpoofed = (lastGpsLocation != null && lastNetworkLocation.distanceTo(lastGpsLocation) > (lastNetworkLocation.getAccuracy() + lastGpsLocation.getAccuracy()) * 1.32);
+
+            if(isSpoofed) {
+                NotificationHandler.getInstance(this).sendWarningNotification(lastNetworkLocation, lastGpsLocation);
+            }
+
             LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
-            addMarker(LocationManager.NETWORK_PROVIDER, new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource((loc.isFromMockProvider() ? R.mipmap.ic_wifi_fake : R.mipmap.ic_wifi_legit))));
-            setFABImageResource(zoomWifi, loc.isFromMockProvider() ? R.mipmap.ic_wifi_fake : R.mipmap.ic_wifi_legit);
+            addMarker(LocationManager.NETWORK_PROVIDER, new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource((isSpoofed ? R.mipmap.ic_wifi_fake : R.mipmap.ic_wifi_legit))));
+            setFABImageResource(zoomWifi, isSpoofed ? R.mipmap.ic_wifi_fake : R.mipmap.ic_wifi_legit);
+
             setFABVisibility(zoomCenter, View.VISIBLE);
             setFABVisibility(zoomWifi, View.VISIBLE);
 
@@ -109,9 +118,18 @@ public class MainActivity extends MapActivity implements OnMapReadyCallback, Loc
 
     private void addGpsMarker(Location loc) {
         if (loc != null) {
+            lastGpsLocation = loc;
+            isSpoofed = (lastNetworkLocation != null && lastGpsLocation.distanceTo(lastNetworkLocation) > (lastGpsLocation.getAccuracy() + lastNetworkLocation.getAccuracy()) * 1.32);
+
+            if (isSpoofed) {
+                removeMarker(LocationManager.NETWORK_PROVIDER);
+                addNetworkMarker(lastNetworkLocation);
+            }
+
             LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
-            addMarker(LocationManager.GPS_PROVIDER, new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource((loc.isFromMockProvider() ? R.mipmap.ic_gps_fake : R.mipmap.ic_gps_legit))));
-            setFABImageResource(zoomGps, loc.isFromMockProvider() ? R.mipmap.ic_gps_fake : R.mipmap.ic_gps_legit);
+            addMarker(LocationManager.GPS_PROVIDER, new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_gps_legit)));
+            setFABImageResource(zoomGps, R.mipmap.ic_gps_legit);
+
             setFABVisibility(zoomCenter, View.VISIBLE);
             setFABVisibility(zoomGps, View.VISIBLE);
 
