@@ -24,7 +24,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import es.furiios.secureloc.R;
 import es.furiios.secureloc.generics.activities.MapActivity;
 import es.furiios.secureloc.location.services.SecureLocLocationService;
+import es.furiios.secureloc.notifications.NotificationHandler;
 
+/**
+ * Clase principal de la aplicación. Se encarga de crear el mapa y de añadir y eliminar los marcadores
+ * dependiendo de las localizaciones reportadas por el sistema. Se puede activar y desactivar el servicio
+ * y mostrar el debug de las localizaciones obtenidas.
+ */
 public class MainActivity extends MapActivity implements OnMapReadyCallback, LocationListener {
 
     private TextView logNetwork, logGps;
@@ -66,7 +72,7 @@ public class MainActivity extends MapActivity implements OnMapReadyCallback, Loc
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             lastNetworkLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             lastGpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            mLocationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0, this);
+            mLocationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 1000, 0, this);
         }
     }
 
@@ -149,28 +155,8 @@ public class MainActivity extends MapActivity implements OnMapReadyCallback, Loc
                 centerOnMarkers();
             } else if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
                 addGpsMarker(location);
-                //Logger.v("es.furiios.secureloc", "Acc: " + location.getAccuracy());
                 centerOnMarkers();
             }
-        }
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-        if (provider.equals(LocationManager.NETWORK_PROVIDER)) {
-            setFABVisibility(zoomWifi, View.GONE);
-        } else if (provider.equals(LocationManager.GPS_PROVIDER)) {
-            setFABVisibility(zoomGps, View.GONE);
         }
     }
 
@@ -211,5 +197,33 @@ public class MainActivity extends MapActivity implements OnMapReadyCallback, Loc
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        if (provider.equals(LocationManager.NETWORK_PROVIDER)) {
+            setFABVisibility(zoomWifi, View.GONE);
+        } else if (provider.equals(LocationManager.GPS_PROVIDER)) {
+            setFABVisibility(zoomGps, View.GONE);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationManager.removeUpdates(this);
+            NotificationHandler.getInstance(this).removeAllNotifications();
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
     }
 }

@@ -17,6 +17,9 @@ import android.support.v4.app.ActivityCompat;
 import es.furiios.secureloc.log.Logger;
 import es.furiios.secureloc.notifications.NotificationHandler;
 
+/**
+ * Servicio principal de la aplicación. Se encarga de comprobar si las localizaciones obtenidas son o no sospechosas.
+ */
 public class SecureLocLocationService extends Service implements LocationListener {
 
     private static final String TAG = "LocatorLocationService";
@@ -36,7 +39,7 @@ public class SecureLocLocationService extends Service implements LocationListene
         if (mPreferences.getBoolean("service", true)) {
             mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mLocationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0, this);
+                mLocationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 1000, 0, this);
             }
             return START_STICKY;
         } else {
@@ -49,16 +52,20 @@ public class SecureLocLocationService extends Service implements LocationListene
         if (location != null) {
             if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
                 mLastNetworkLocation = location;
+                NotificationHandler.getInstance(this).sendUsingNetworkNotification();
                 if (!isRequesting && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     isRequesting = true;
                     mLocationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
                 }
             }
-            if (mLastNetworkLocation != null && location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
-                if (mLastNetworkLocation.distanceTo(location) > (mLastNetworkLocation.getAccuracy() + location.getAccuracy()) * 1.32) {
-                    NotificationHandler.getInstance(this).sendWarningNotification(mLastNetworkLocation, location);
+            if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
+                NotificationHandler.getInstance(this).sendUsingGpsNotification();
+                if (mLastNetworkLocation != null) {
+                    if (mLastNetworkLocation.distanceTo(location) > (mLastNetworkLocation.getAccuracy() + location.getAccuracy()) * 1.32) {
+                        NotificationHandler.getInstance(this).sendWarningNotification(mLastNetworkLocation, location);
+                    }
+                    isRequesting = false;
                 }
-                isRequesting = false;
             }
         }
     }
@@ -81,6 +88,10 @@ public class SecureLocLocationService extends Service implements LocationListene
     @Override
     public void onDestroy() {
         inited = false;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationManager.removeUpdates(this);
+            NotificationHandler.getInstance(this).removeAllNotifications();
+        }
         Logger.v(TAG, "Stopping SecureLocLocationService...");
     }
 
@@ -93,8 +104,7 @@ public class SecureLocLocationService extends Service implements LocationListene
 
     public static void finish(Activity activity) {
         if (inited) {
-            inited = false;
-            activity.startService(service);
+            activity.stopService(service);
         }
     }
 

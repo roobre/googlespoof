@@ -16,6 +16,11 @@ import java.util.HashMap;
 
 import es.furiios.secureloc.R;
 
+
+/**
+ * Clase de apoyo para el mapa. Esta clase contiene las funciones básicas para una activity que quiere
+ * añadir y quitar marcadores, hacer zoom en uno de ellos u encuadrar el mapa en todos ellos,
+ */
 public abstract class MapActivity extends AppCompatActivity {
 
     protected GoogleMap mGoogleMap;
