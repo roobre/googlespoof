@@ -20,6 +20,7 @@ provide their location they are on the point supplied to the program.
         -r [range (0.000300)]
         -m [max age in months (12)]
         -l [limit max aps (40)]
+        -j [local json. +file.json to dump, -file.json to load]
 
 
 ## SecureLoc
