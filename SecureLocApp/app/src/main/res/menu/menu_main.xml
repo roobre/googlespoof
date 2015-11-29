@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="es.furiios.secureloc.activities.MainActivity">
+    <item
+        android:id="@+id/action_debug"
+        android:checkable="true"
+        android:checkableBehavior="single"
+        android:orderInCategory="100"
+        android:title="@string/show_debug"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_service"
+        android:checkable="true"
+        android:checkableBehavior="single"
+        android:orderInCategory="200"
+        android:title="@string/run_service"
+        app:showAsAction="never" />
+</menu>
