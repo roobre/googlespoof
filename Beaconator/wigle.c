@@ -16,11 +16,11 @@ const char WIGLE_BASE_URL[] = "https://wigle.net/api/v1/jsonSearch";
 const char WILGE_AUTHCOOKIE[] = "auth=cybercamp2:282401487:1448674819:GITL4702g/iluzMM8TdXbw";
 
 void fetch_wigle(char** json, double lat, double lng, double offset) {
-    char postdata[256];
+    char postdata[128];
 
     *json = NULL;
 
-    sprintf(postdata, "latrange1=%lf&latrange2=%lf&longrange1=%lf&longrange2=%lf", lat, lat + offset, lng,
+    sprintf(postdata, "latrange1=%.4lf&latrange2=%.4lf&longrange1=%.4lf&longrange2=%.4lf", lat, lat + offset, lng,
             lng - 3 * offset);
 
     CURL* res;
@@ -49,7 +49,7 @@ size_t curl_callback(char* data, size_t size, size_t nmemb, void* userdata) {
     } else {
         previouslen = strlen(*save);
         *save = realloc(*save, totalsize + previouslen);
-        strcat(*save, data);
+        memcpy(*save + previouslen, data, totalsize);
     }
 
     (*save)[totalsize + previouslen + 1] = '\0';

@@ -16,9 +16,9 @@ void parse_json(ap_t** list, char* json, int months, int max) {
 
     size_t parsed = 0;
 
-    char* bssid;
-    char* essid;
-    char* timestr;
+    const char* bssid;
+    const char* essid;
+    const char* timestr;
     char timebuf[8];
     unsigned long long timestamp;
 
@@ -33,17 +33,9 @@ void parse_json(ap_t** list, char* json, int months, int max) {
         for (int i = 0; i < json_array_size(results) && parsed < max; i++) {
             result = json_array_get(results, i);
 
-            buf = json_object_get(result, "ssid");
-            essid = strcpy(malloc(strlen(json_string_value(buf))), json_string_value(buf));
-            json_decref(buf);
-
-            buf = json_object_get(result, "netid");
-            bssid = strcpy(malloc(strlen(json_string_value(buf))), json_string_value(buf));
-            json_decref(buf);
-
-            buf = json_object_get(result, "lastupdt");
-            timestr = strcpy(malloc(strlen(json_string_value(buf))), json_string_value(buf));
-            json_decref(buf);
+            essid = json_string_value(json_object_get(result, "ssid"));
+            bssid = json_string_value(json_object_get(result, "netid"));
+            timestr = json_string_value(json_object_get(result, "lastupdt"));
 
             timestamp = 0;
             // Add year
@@ -87,9 +79,6 @@ void parse_json(ap_t** list, char* json, int months, int max) {
                 parsed++;
             }
             json_decref(result);
-            free(essid);
-            free(bssid);
-            free(timestr);
         }
         json_decref(results);
     }
