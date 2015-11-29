@@ -11,13 +11,14 @@ void parse_json(ap_t** list, char* json, int months, int max) {
     json_t* root;
     json_t* results;
     json_t* result;
+    json_t* buf;
     json_error_t error;
 
     size_t parsed = 0;
 
-    const char* bssid;
-    const char* essid;
-    const char* timestr;
+    char* bssid;
+    char* essid;
+    char* timestr;
     char timebuf[8];
     unsigned long long timestamp;
 
@@ -27,14 +28,22 @@ void parse_json(ap_t** list, char* json, int months, int max) {
     ap_t** current;
     *list = NULL;
 
-    if (results = json_object_get(root, "results")) {
+    if ((results = json_object_get(root, "results"))) {
         current = list;
-        for (int i = 0; i < json_array_size(results); i++) {
+        for (int i = 0; i < json_array_size(results) && parsed < max; i++) {
             result = json_array_get(results, i);
 
-            essid = json_string_value(json_object_get(result, "ssid"));
-            bssid = json_string_value(json_object_get(result, "netid"));
-            timestr = json_string_value(json_object_get(result, "lastupdt"));
+            buf = json_object_get(result, "ssid");
+            essid = strcpy(malloc(strlen(json_string_value(buf))), json_string_value(buf));
+            json_decref(buf);
+
+            buf = json_object_get(result, "netid");
+            bssid = strcpy(malloc(strlen(json_string_value(buf))), json_string_value(buf));
+            json_decref(buf);
+
+            buf = json_object_get(result, "lastupdt");
+            timestr = strcpy(malloc(strlen(json_string_value(buf))), json_string_value(buf));
+            json_decref(buf);
 
             timestamp = 0;
             // Add year
@@ -70,14 +79,19 @@ void parse_json(ap_t** list, char* json, int months, int max) {
 
                 strcpy((*current)->essid, essid);
 
-                for (int i = 0; i < 6; i++) {
-                    (*current)->bssid[i] = strtol(bssid + 3 * i, NULL, 16);
+                for (int j = 0; j < 6; j++) {
+                    (*current)->bssid[j] = (uint8_t) strtol(bssid + 3 * j, NULL, 16);
                 }
 
                 current = &((*current)->next);
                 parsed++;
             }
+            json_decref(result);
+            free(essid);
+            free(bssid);
+            free(timestr);
         }
+        json_decref(results);
     }
 
     json_decref(root);

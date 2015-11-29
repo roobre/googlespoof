@@ -78,7 +78,7 @@ void send_beacons(ap_t* list, const char* interface) {
             // channel
             lcpf_add_ie(metapack, (uint8_t) 3, sizeof(channel), &channel);
             // MS WPA
-            lcpf_add_ie(metapack, (uint8_t) 221, sizeof(channel), mswpa);
+            lcpf_add_ie(metapack, (uint8_t) 221, sizeof(mswpa), mswpa);
 
             packetsize = lcpa_size(metapack);
             packet = malloc(packetsize);
